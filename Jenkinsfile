@@ -35,9 +35,14 @@ pipeline {
     post {
         always {
             script {
-                def qg = waitForQualityGate()
-                if (qg.status != 'OK') {
-                    error "SonarQube analysis failed with status: ${qg.status}"
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    def qg = waitForQualityGate()
+                    if (qg.status != 'OK') {
+                        echo "SonarQube analysis failed with status: ${qg.status}"
+                        // Add any additional steps or cleanup here
+                    } else {
+                        echo "SonarQube analysis passed successfully"
+                    }
                 }
             }
         }

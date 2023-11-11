@@ -18,7 +18,15 @@ pipeline {
                 echo "Deploy Stage"
             }
         }
+        stage('SonarQube Analysis') {
+        environment{
+            scannerHome = tool 'multibranch-sonar-scanner'
+        }
 
+            steps {
+            withSonarQubeEnv('multibranch-sonarqube-server') {
+                sh "${scannerHome}/bin/sonar-scanner"
+            }
 
         }
 

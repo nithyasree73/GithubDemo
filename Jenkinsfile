@@ -19,16 +19,27 @@ pipeline {
             }
         }
         stage('SonarQube Analysis') {
-        environment{
-            scannerHome = tool 'multibranch-sonar-scanner'
-        }
-
-            steps {
-            withSonarQubeEnv('multibranch-sonarqube-server') {
-                sh "${scannerHome}/bin/sonar-scanner"
+            environment {
+                scannerHome = tool 'multibranch-sonar-scanner'
             }
-
+            steps {
+                script {
+                    withSonarQubeEnv('multibranch-sonarqube-server') {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
+            }
         }
+    }
 
-
+    post {
+        always {
+            script {
+                def qg = waitForQualityGate()
+                if (qg.status != 'OK') {
+                    error "SonarQube analysis failed with status: ${qg.status}"
+                }
+            }
+        }
+    }
 }

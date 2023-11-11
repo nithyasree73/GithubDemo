@@ -24,7 +24,7 @@ pipeline {
             }
             steps {
                 script {
-                    withSonarQubeEnv('multibranch-sonarqube-server') {
+                    withSonarQubeEnv('multibranch-sonar-server') {
                         sh "${scannerHome}/bin/sonar-scanner"
                     }
                 }
